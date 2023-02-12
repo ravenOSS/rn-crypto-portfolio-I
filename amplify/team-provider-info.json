@@ -1,0 +1,39 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-amplifycryptofolio-dev-222503-authRole",
+      "UnauthRoleArn": "arn:aws:iam::355263567883:role/amplify-amplifycryptofolio-dev-222503-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::355263567883:role/amplify-amplifycryptofolio-dev-222503-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-amplifycryptofolio-dev-222503-deployment",
+      "UnauthRoleName": "amplify-amplifycryptofolio-dev-222503-unauthRole",
+      "StackName": "amplify-amplifycryptofolio-dev-222503",
+      "StackId": "arn:aws:cloudformation:us-west-2:355263567883:stack/amplify-amplifycryptofolio-dev-222503/53368060-834b-11ed-ace7-02400cc3b259",
+      "AmplifyAppId": "d1lktjual8787v"
+    }
+  },
+  "develop": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-amplifycryptofolio-develop-222900-authRole",
+      "UnauthRoleArn": "arn:aws:iam::355263567883:role/amplify-amplifycryptofolio-develop-222900-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::355263567883:role/amplify-amplifycryptofolio-develop-222900-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-amplifycryptofolio-develop-222900-deployment",
+      "UnauthRoleName": "amplify-amplifycryptofolio-develop-222900-unauthRole",
+      "StackName": "amplify-amplifycryptofolio-develop-222900",
+      "StackId": "arn:aws:cloudformation:us-west-2:355263567883:stack/amplify-amplifycryptofolio-develop-222900/e0243ad0-834b-11ed-a0bb-0afc9ee1966f",
+      "AmplifyAppId": "d1lktjual8787v"
+    },
+    "categories": {
+      "auth": {
+        "amplifycryptofolio7ae87080": {}
+      },
+      "storage": {
+        "cryptofolio22": {}
+      },
+      "api": {
+        "amplifycryptofolio": {}
+      }
+    }
+  }
+}

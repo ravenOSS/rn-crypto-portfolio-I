@@ -1,0 +1,10 @@
+{
+  "resourceName": "cryptofolio22",
+  "tableName": "cryptofolio22table",
+  "partitionKey": {
+    "fieldName": "id",
+    "fieldType": "string"
+  },
+  "gsi": [],
+  "triggerFunctions": []
+}
