@@ -1,39 +1,10 @@
+// This code is setting up an Apollo Client to make GraphQL requests to the Blocktap API. It is creating an httpLink to the Blocktap API, setting up an authLink to provide the API key, and creating an Apollo Client with the httpLink and authLink. It is also setting up a GraphQL query to get the market caps of assets.
+import { ApolloProvider, gql, useQuery } from '@apollo/client'
+import BlocktapClient from '../components/BlocktapClient'
 import { useEffect, useState } from 'react'
 
 import { StyleSheet, Text, View, Pressable } from 'react-native'
 import { useTheme, DataTable } from 'react-native-paper'
-
-import {
-	ApolloProvider,
-	ApolloClient,
-	InMemoryCache,
-	createHttpLink,
-	ApolloLink,
-	gql,
-} from '@apollo/client'
-import { useMutation, useQuery } from '@apollo/client'
-import { setContext } from '@apollo/client/link/context'
-
-const blocktap_httpLink = createHttpLink({
-	uri: 'https://api.blocktap.io/graphql',
-})
-
-const blocktap_authLink = setContext((_, { headers }) => {
-	const token = process.env.Blocktap_API_Key
-	//! return the headers to the context so blocktap_httpLink can read them
-	return {
-		headers: {
-			...headers,
-			authorization: token ? `Bearer ${token}` : '',
-		},
-	}
-})
-
-const blocktap_client = new ApolloClient({
-	link: blocktap_authLink.concat(blocktap_httpLink),
-	cache: new InMemoryCache(),
-	credentials: 'include',
-})
 
 const GET_MARKETCAPS = gql`
 	query MarketCapRank {
@@ -54,7 +25,9 @@ const GET_MARKETCAPS = gql`
 `
 
 const MarketCapsTableContent = () => {
-	const { loading, error, data } = useQuery(GET_MARKETCAPS)
+	const { loading, error, data } = useQuery(GET_MARKETCAPS, {
+		fetchPolicy: 'network-only',
+	}) // only network not cache
 
 	console.log(`Data: ${JSON.stringify(data)}`)
 
@@ -123,15 +96,17 @@ const DisplayMarketCaps = () => {
 
 function SignOutButton() {
 	const { signOut } = useAuthenticator()
-	return <Button title='Sign Out' onPress={signOut} />
+	return <Button style={styles.signOut} title='Sign Out' onPress={signOut} />
 }
 
 function MarketListing() {
 	return (
-		<ApolloProvider client={blocktap_client}>
-			<Text style={styles.title}>Welcome Crypto Enthusiast!</Text>
-			<Text>Let's create a tracking portfolio</Text>
-			<DisplayMarketCaps />
+		<ApolloProvider client={BlocktapClient}>
+			<View style={styles.container}>
+				<Text style={styles.title}>Crypto Market Cap Ranking</Text>
+				<Text style={styles.body}>Let's create a tracking portfolio</Text>
+				<DisplayMarketCaps />
+			</View>
 		</ApolloProvider>
 	)
 }
@@ -152,12 +127,13 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 	},
 	body: {
-		backgroundColor: 'gray',
+		backgroundColor: 'orange',
 		alignItems: 'center',
 		justifyContent: 'center',
+		textAlign: 'center',
 	},
 	signOut: {
-		marginBottom: 50,
+		marginBottom: 5,
 		paddingBottom: 20,
 	},
 })
