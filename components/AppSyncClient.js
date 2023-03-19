@@ -1,16 +1,12 @@
-import { AWS_GraphQL_API_KEY } from '@env'
 import { createAuthLink } from 'aws-appsync-auth-link'
+import { createSubscriptionHandshakeLink } from 'aws-appsync-subscription-link'
 
-import { v4 as uuidv4 } from 'uuid'
 import {
-	ApolloProvider,
 	ApolloClient,
 	ApolloLink,
-	InMemoryCache,
+	from,
 	HttpLink,
-	gql,
-	useMutation,
-	useQuery,
+	InMemoryCache,
 } from '@apollo/client'
 
 import awsmobile from '../src/aws-exports'
@@ -19,18 +15,31 @@ const url = awsmobile.aws_appsync_graphqlEndpoint
 const region = awsmobile.aws_appsync_region
 const auth = {
 	type: awsmobile.aws_appsync_authenticationType,
-	apiKey: AWS_GraphQL_API_KEY,
+	apiKey: awsmobile.aws_appsync_apiKey,
 }
 
-const AShttpLink = new HttpLink({ uri: url })
+const httpLink = new HttpLink({ uri: url })
 
+// ! PER GPT - add (operation, forward)
 const AppSyncLink = ApolloLink.from([
-	createAuthLink({ url, region, auth }),
-	AShttpLink,
+	createAuthLink({ url, region, auth }, httpLink),
+	createSubscriptionHandshakeLink(url, httpLink),
+	// Add the forward function here
+	(operation, forward) => {
+		return forward(operation).map((response) => {
+			const { errors } = response
+			if (errors) {
+				errors.map(({ message }) => {
+					console.warn(`[GraphQL error]: Message: ${message}`)
+				})
+			}
+			return response
+		})
+	},
 ])
 
 const AppSyncClient = new ApolloClient({
-	AppSyncLink,
+	link: AppSyncLink,
 	cache: new InMemoryCache(),
 })
 
