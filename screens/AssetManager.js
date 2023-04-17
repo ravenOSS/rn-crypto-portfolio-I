@@ -1,41 +1,124 @@
+import React, { useState } from 'react'
 import AppSyncClient from '../components/AppSyncClient'
-import {
-	ApolloProvider,
-	ApolloConsumer,
-	gql,
-	useMutation,
-	useQuery,
-} from '@apollo/client'
-import { StyleSheet, Text, View } from 'react-native'
-import { Button } from 'react-native-paper'
-import { createAsset } from '../src/graphql/mutations'
+import { ApolloProvider, gql, useMutation, useQuery } from '@apollo/client'
+import { Alert, StyleSheet, Text, View } from 'react-native'
+import { Button, TextInput } from 'react-native-paper'
+import { v4 as uuidv4 } from 'uuid'
+// import { createAsset } from '../src/graphql/mutations'
 
-export default function AssetManager() {
-	const CREATE_ASSET = gql`
-		mutation CreateAsset($input: input!) {
-			createAsset(input: $input) {
-				id
-				name
-				description
+// ! Define mutation
+// ! Per GTP
+const CREATE_ASSET_MUTATION = gql`
+	mutation CreateAsset(
+		$uniqueID: String!
+		$assetName: String!
+		$assetSymbol: String!
+	) {
+		createAsset(
+			input: {
+				uniqueID: $uniqueID
+				assetName: $assetName
+				assetSymbol: $assetSymbol
 			}
+		) {
+			id
+			uniqueID
+			assetName
+			assetSymbol
 		}
-	`
+	}
+`
+// Mutation from src/graphql/mutations.js
+export const createAsset = /* GraphQL */ `
+  mutation CreateAsset(
+    $input: CreateAssetInput!
+    $condition: ModelAssetConditionInput
+  ) {
+    createAsset(input: $input, condition: $condition) {
+      id
+      uniqueID
+      assetName
+      assetSymbol
+      initialPurchasePrice
+      assignedCapital
+      lastPrice
+      lastRank
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
 
-	let input = {
-		uniqueID: 'c6b426bd',
-		assetName: 'Ethereum',
-		assetSymbol: 'ETH',
+const AssetEntryForm = () => {
+	const [uniqueId, setUniqueId] = useState('')
+	const [assetName, setAssetName] = useState('')
+	const [assetSymbol, setAssetSymbol] = useState('')
+	const [createAsset, { loading, error }] = useMutation(CREATE_ASSET_MUTATION)
+
+	if (loading) return <Text>'Submitting...'</Text>
+	if (error) return <Text>`Submission error! ${error.message}`</Text>
+
+	const handleFormSubmit = () => {
+		createAsset({
+			variables: {
+				uniqueID: uniqueId,
+				assetName: assetName,
+				assetSymbol: assetSymbol,
+			},
+		})
 	}
 
 	return (
+		<View style={styles.container}>
+			<Text style={styles.label}>UniqueID:</Text>
+			<TextInput
+				style={styles.input}
+				placeholder='Enter Asset ID'
+				onChangeText={(text) => setUniqueId(text)}
+				value={uniqueId}
+			/>
+
+			<Text style={styles.label}>AssetName:</Text>
+			<TextInput
+				style={styles.input}
+				placeholder='Enter Asset Name'
+				onChangeText={(text) => setAssetName(text)}
+				value={assetName}
+			/>
+
+			<Text style={styles.label}>Symbol:</Text>
+			<TextInput
+				style={styles.input}
+				placeholder='Enter Asset Symbol'
+				onChangeText={(text) => setAssetSymbol(text)}
+				value={assetSymbol}
+			/>
+
+			<Button
+				mode='contained'
+				onPress={() => {
+					Alert.alert('Pressed')
+					handleFormSubmit()
+				}}
+			>
+				Submit
+			</Button>
+		</View>
+	)
+}
+
+function CreateAsset() {
+	return (
 		<ApolloProvider client={AppSyncClient}>
-			<View style={styles.container}>
-				<Text>We have access to the client!'</Text>
-				<Button onPress={createAsset({ input })}>Create Test Asset</Button>
-			</View>
+			<AssetEntryForm />
 		</ApolloProvider>
 	)
 }
+
+export default CreateAsset
 
 const styles = StyleSheet.create({
 	container: {
@@ -43,6 +126,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'gray',
 		alignItems: 'center',
 		justifyContent: 'center',
+		margin: 20,
 	},
 	title: {
 		fontSize: 25,
@@ -51,16 +135,89 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 	},
 	body: {
-		backgroundColor: 'orange',
+		backgroundColor: 'gray',
 		alignItems: 'center',
 		justifyContent: 'center',
-		textAlign: 'center',
+	},
+	label: {
+		fontSize: 18,
+		marginBottom: 10,
+	},
+	input: {
+		borderWidth: 1,
+		borderColor: '#ccc',
+		borderRadius: 4,
+		padding: 10,
+		marginBottom: 20,
+		fontSize: 18,
+		width: 150,
+		alignItems: 'center',
+		justifyContent: 'center',
 	},
 	signOut: {
-		marginBottom: 5,
+		marginBottom: 30,
 		paddingBottom: 20,
 	},
 })
+// const CREATE_ASSET_MUTATION = gql`
+// 	mutation CreateAsset(
+// 		# Which variables are getting passed in? And What types are they
+// 		$uniqueID: String!
+// 		$assetName: String!
+// 		$assetSymbol: String!
+// 	) {
+// 		createAsset(
+// 			uniqueID: $uniqueID
+// 			assetName: $assetName
+// 			assetSymbol: $assetSymbol
+// 		) {
+// 			# data returned after execution of the mutation
+// 			id
+// 			uniqueID
+// 			assetName
+// 			assetSymbol
+// 		}
+// 	}
+// `
+
+// ! Original code before GPT
+// const AssetEntryForm = () => {
+// 	const [uniqueId, setUniqueId] = useState('')
+// 	const [assetName, setAssetName] = useState('')
+// 	const [assetSymbol, setAssetSymbol] = useState('')
+
+// 	const [createAsset, { loading, error }] = useMutation(CREATE_ASSET_MUTATION)
+
+// 	// ! Per GPT
+// 	const handleFormSubmit = () => {
+// 		createAsset({
+// 			variables: {
+// 				input: {
+// 					uniqueID,
+// 					assetName,
+// 					assetSymbol,
+// 				},
+// 			},
+// 		})
+// 	}
+
+// const handleFormSubmit = () => {
+// 	createAsset({
+// 		variables: {
+// 			uniqueId,
+// 			assetName,
+// 			assetSymbol,
+// 		},
+// 	})
+// }
+
+
+
+//! useMutation hook returns two items:
+//! A mutate function that can be called to execute mutation
+//! An object with fields that represent the current status of the mutation's execution
+//! Note that we provide the name for the function that is returned from the hook
+//! error and loading states can be used in the UI or for code to handle
 
 // const DELETE_ASSET = gql`
 // 	mutation deleteAsset($input: DeleteAssetInput!) {
