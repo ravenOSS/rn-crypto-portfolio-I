@@ -8,6 +8,7 @@ export const createAsset = /* GraphQL */ `
   ) {
     createAsset(input: $input, condition: $condition) {
       id
+      uniqueID
       assetName
       assetSymbol
       initialPurchasePrice
@@ -29,6 +30,7 @@ export const updateAsset = /* GraphQL */ `
   ) {
     updateAsset(input: $input, condition: $condition) {
       id
+      uniqueID
       assetName
       assetSymbol
       initialPurchasePrice
@@ -50,6 +52,7 @@ export const deleteAsset = /* GraphQL */ `
   ) {
     deleteAsset(input: $input, condition: $condition) {
       id
+      uniqueID
       assetName
       assetSymbol
       initialPurchasePrice

@@ -10,6 +10,13 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "uniqueID": {
+                    "name": "uniqueID",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "assetName": {
                     "name": "assetName",
                     "isArray": false,
@@ -81,6 +88,6 @@ export const schema = {
     },
     "enums": {},
     "nonModels": {},
-    "codegenVersion": "3.3.2",
-    "version": "34bd27ed04c4eec609d92a420df3bd4c"
+    "codegenVersion": "3.3.5",
+    "version": "99db2c61d38de70b3097de8c6e589948"
 };

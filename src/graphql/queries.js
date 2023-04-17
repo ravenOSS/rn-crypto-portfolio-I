@@ -5,6 +5,7 @@ export const getAsset = /* GraphQL */ `
   query GetAsset($id: ID!) {
     getAsset(id: $id) {
       id
+      uniqueID
       assetName
       assetSymbol
       initialPurchasePrice
@@ -28,6 +29,7 @@ export const listAssets = /* GraphQL */ `
     listAssets(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        uniqueID
         assetName
         assetSymbol
         initialPurchasePrice
@@ -60,6 +62,7 @@ export const syncAssets = /* GraphQL */ `
     ) {
       items {
         id
+        uniqueID
         assetName
         assetSymbol
         initialPurchasePrice

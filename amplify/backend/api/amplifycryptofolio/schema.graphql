@@ -5,6 +5,7 @@ input AMPLIFY {
 } # FOR TESTING ONLY!
 type Asset @model {
 	id: ID!
+	uniqueID: String
 	assetName: String
 	assetSymbol: String
 	initialPurchasePrice: Float

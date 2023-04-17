@@ -5,6 +5,7 @@ export const onCreateAsset = /* GraphQL */ `
   subscription OnCreateAsset($filter: ModelSubscriptionAssetFilterInput) {
     onCreateAsset(filter: $filter) {
       id
+      uniqueID
       assetName
       assetSymbol
       initialPurchasePrice
@@ -23,6 +24,7 @@ export const onUpdateAsset = /* GraphQL */ `
   subscription OnUpdateAsset($filter: ModelSubscriptionAssetFilterInput) {
     onUpdateAsset(filter: $filter) {
       id
+      uniqueID
       assetName
       assetSymbol
       initialPurchasePrice
@@ -41,6 +43,7 @@ export const onDeleteAsset = /* GraphQL */ `
   subscription OnDeleteAsset($filter: ModelSubscriptionAssetFilterInput) {
     onDeleteAsset(filter: $filter) {
       id
+      uniqueID
       assetName
       assetSymbol
       initialPurchasePrice

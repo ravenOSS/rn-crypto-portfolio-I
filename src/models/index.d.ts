@@ -12,6 +12,7 @@ type EagerAsset = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
+  readonly uniqueID?: string | null;
   readonly assetName?: string | null;
   readonly assetSymbol?: string | null;
   readonly initialPurchasePrice?: number | null;
@@ -28,6 +29,7 @@ type LazyAsset = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
+  readonly uniqueID?: string | null;
   readonly assetName?: string | null;
   readonly assetSymbol?: string | null;
   readonly initialPurchasePrice?: number | null;
