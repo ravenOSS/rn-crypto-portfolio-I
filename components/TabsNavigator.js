@@ -5,6 +5,7 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import Home from '../screens/HomeScreen'
 import MarketListing from '../screens/MarketListingScreen'
 import CreateAsset from '../screens/AssetManager'
+import FlatMarketList from '../screens/MktListingFlatlist'
 
 const Tab = createMaterialBottomTabNavigator()
 
@@ -13,6 +14,7 @@ function TabNavigation() {
 		<Tab.Navigator>
 			<Tab.Screen name='Home' component={Home} />
 			<Tab.Screen name='Market' component={MarketListing} />
+			<Tab.Screen name='FlatList' component={FlatMarketList} />
 			<Tab.Screen name='Portfolio' component={CreateAsset} />
 		</Tab.Navigator>
 	)

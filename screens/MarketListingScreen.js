@@ -3,7 +3,14 @@ import { ApolloProvider, gql, useQuery } from '@apollo/client'
 import BlocktapClient from '../components/BlocktapClient'
 import { useEffect, useState } from 'react'
 
-import { StyleSheet, Text, View, Pressable } from 'react-native'
+import {
+	StyleSheet,
+	Text,
+	View,
+	Pressable,
+	FlatList,
+	StatusBar,
+} from 'react-native'
 import { useTheme, DataTable } from 'react-native-paper'
 
 const GET_MARKETCAPS = gql`
@@ -23,6 +30,35 @@ const GET_MARKETCAPS = gql`
 		}
 	}
 `
+
+// function DisplayMarketCaps() {
+// 	const { loading, error, data } = useQuery(GET_MARKETCAPS)
+// 	const [marketCaps, setMarketCaps] = useState([])
+// 	const { colors } = useTheme()
+
+// 	useEffect(() => {
+// 		if (data) {
+// 			setMarketCaps(data.assets)
+// 		}
+// 	}, [data])
+
+// 	if (loading) return <Text>Loading...</Text>
+// 	if (error) return <Text>Error :(</Text>
+
+// 	return (
+// 		<Flatlist
+// 			data={marketCaps}
+// 			renderItem={({ item }) => (
+// 				<View style={styles.container}>
+// 					<Text style={styles.title}>
+// 						{item.assetName} ({item.assetSymbol}) - {item.marketCap}
+// 					</Text>
+// 				</View>
+// 			)}
+// 			keyExtractor={(item) => item.id}
+// 		/>
+// 	)
+// }
 
 const MarketCapsTableContent = () => {
 	const { loading, error, data } = useQuery(GET_MARKETCAPS, {
@@ -94,11 +130,6 @@ const DisplayMarketCaps = () => {
 	)
 }
 
-function SignOutButton() {
-	const { signOut } = useAuthenticator()
-	return <Button style={styles.signOut} title='Sign Out' onPress={signOut} />
-}
-
 function MarketListing() {
 	return (
 		<ApolloProvider client={BlocktapClient}>
@@ -119,6 +150,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'gray',
 		alignItems: 'center',
 		justifyContent: 'center',
+		marginTop: StatusBar.currentHeight || 0,
 	},
 	title: {
 		fontSize: 25,
@@ -126,6 +158,13 @@ const styles = StyleSheet.create({
 		padding: 5,
 		textAlign: 'center',
 	},
+	item: {
+		backgroundColor: '#f9c2ff',
+		padding: 20,
+		marginVertical: 8,
+		marginHorizontal: 16,
+	},
+
 	body: {
 		backgroundColor: 'orange',
 		alignItems: 'center',
