@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 
 import { StyleSheet, Text, View, Pressable, Flatlist } from 'react-native'
 import { useTheme } from 'react-native-paper'
+import { StatusBar } from 'expo-status-bar'
 
 const GET_MARKETCAPS = gql`
 	query MarketCapRank {
@@ -25,7 +26,7 @@ const GET_MARKETCAPS = gql`
 `
 
 // create a MarketCapsTableContent function to render data returned from a graphql query using react-native Flatlist
-function MarketCapsTableContent() {
+function MarketCapsListContent() {
 	const { loading, error, data } = useQuery(GET_MARKETCAPS)
 	const [marketCaps, setMarketCaps] = useState([])
 	const { colors } = useTheme()
@@ -38,6 +39,8 @@ function MarketCapsTableContent() {
 
 	if (loading) return <Text>Loading...</Text>
 	if (error) return <Text>Error :(</Text>
+	if (!data) return <Text>Not found</Text>
+
 
 	return (
 		<Flatlist
@@ -78,7 +81,7 @@ function FlatMarketList() {
 			<View style={styles.container}>
 				<Text style={styles.title}>Crypto Market Cap Ranking</Text>
 				<Text style={styles.body}>Let's create a tracking portfolio</Text>
-				<MarketCapsTableContent />
+				<MarketCapsListContent />
 			</View>
 		</ApolloProvider>
 	)
@@ -92,6 +95,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'gray',
 		alignItems: 'center',
 		justifyContent: 'center',
+		// marginTop: StatusBar.currentHeight || 0,
 	},
 	title: {
 		fontSize: 25,

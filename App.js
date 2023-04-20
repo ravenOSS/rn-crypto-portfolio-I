@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: 'gray',
 		alignItems: 'center',
+		
 		// justifyContent: 'center',
 	},
 	title: {
