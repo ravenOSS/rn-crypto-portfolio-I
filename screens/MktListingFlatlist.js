@@ -3,7 +3,7 @@ import { ApolloProvider, gql, useQuery } from '@apollo/client'
 import BlocktapClient from '../components/BlocktapClient'
 import { useEffect, useState } from 'react'
 
-import { StyleSheet, Text, View, Pressable, Flatlist } from 'react-native'
+import { StyleSheet, Text, View, Pressable, FlatList } from 'react-native'
 import { useTheme } from 'react-native-paper'
 import { StatusBar } from 'expo-status-bar'
 
@@ -25,54 +25,51 @@ const GET_MARKETCAPS = gql`
 	}
 `
 
-// create a MarketCapsTableContent function to render data returned from a graphql query using react-native Flatlist
-function MarketCapsListContent() {
-	const { loading, error, data } = useQuery(GET_MARKETCAPS)
-	const [marketCaps, setMarketCaps] = useState([])
-	const { colors } = useTheme()
+const renderItem = ({ item }) => (
+	<View style={styles.itemContainer}>
+		<Text style={styles.name}>{item.assetName}</Text>
+		<Text style={styles.symbol}>{item.assetSymbol}</Text>
+		<Text style={styles.price}>
+			Market Cap: {item.marketCap.toLocaleString()}
+		</Text>
+	</View>
+)
 
-	useEffect(() => {
-		if (data) {
-			setMarketCaps(data.assets)
-		}
-	}, [data])
+const CryptoListScreen = () => {
+	// Fetch cryptocurrency data using Apollo useQuery hook
+	const { loading, error, data } = useQuery(GET_MARKETCAPS, {
+		fetchPolicy: 'network-only',
+	})
 
-	if (loading) return <Text>Loading...</Text>
-	if (error) return <Text>Error :(</Text>
-	if (!data) return <Text>Not found</Text>
+	if (loading) {
+		// Render loading state
+		return (
+			<View style={styles.loadingContainer}>
+				<Text>Loading...</Text>
+			</View>
+		)
+	}
 
+	if (error) {
+		// Render error state
+		return (
+			<View style={styles.errorContainer}>
+				<Text>Error: {error.message}</Text>
+			</View>
+		)
+	}
 
+	console.log(`Data: ${JSON.stringify(data)}`)
+	// Render FlatList with cryptocurrency data
 	return (
-		<Flatlist
-			data={marketCaps}
-			renderItem={({ item }) => (
-				<View style={styles.container}>
-					<Text style={styles.title}>
-						{item.assetName} ({item.assetSymbol}) - {item.marketCap}
-					</Text>
-				</View>
-			)}
-			keyExtractor={(item) => item.id}
-		/>
+		<View style={styles.container}>
+			<FlatList
+				data={data.assets} // Replace with the actual data retrieved from GraphQL query
+				renderItem={renderItem}
+				keyExtractor={(item) => item.id} // Replace with the unique identifier for each item
+			/>
+		</View>
 	)
-}
-
-/* Explanation for the code above:
-1. The GraphQL query is called GET_MARKETCAPS, and it's a constant variable.
-2. The query is structured in a way that it will return a list of assets that have a market cap rank less than or equal to 15.
-3. The query will sort the result by market cap rank in ascending order.
-4. The query will return the id, assetName, assetSymbol, and marketCap of each asset.
-5. The MarketCapsTableContent function is a React component that will render the data returned from the GraphQL query.
-6. The useQuery hook is used to execute the GraphQL query and return the result. It takes the GraphQL query as an argument.
-7. The useState hook is used to create a state variable called marketCaps. It is initialized to an empty array.
-8. The useEffect hook is used to update the marketCaps state variable when the data returned from the GraphQL query changes.
-9. The Flatlist component is used to render the data returned from the GraphQL query. It takes the data as an argument and renders each item in the data array as a row in the table. */
-
-{
-	/* function SignOutButton() {
-	const { signOut } = useAuthenticator()
-	return <Button style={styles.signOut} title='Sign Out' onPress={signOut} />
-} */
 }
 
 function FlatMarketList() {
@@ -81,7 +78,7 @@ function FlatMarketList() {
 			<View style={styles.container}>
 				<Text style={styles.title}>Crypto Market Cap Ranking</Text>
 				<Text style={styles.body}>Let's create a tracking portfolio</Text>
-				<MarketCapsListContent />
+				<CryptoListScreen />
 			</View>
 		</ApolloProvider>
 	)
@@ -92,25 +89,75 @@ export default FlatMarketList
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: 'gray',
-		alignItems: 'center',
+		padding: 16,
+	},
+	itemContainer: {
+		borderBottomWidth: 1,
+		borderBottomColor: '#ccc',
+		paddingVertical: 8,
+	},
+	name: {
+		fontSize: 16,
+		fontWeight: 'bold',
+	},
+	symbol: {
+		fontSize: 18,
+		fontWeight: 'bold',
+		color: '#666',
+	},
+	price: {
+		fontSize: 16,
+		color: '#333',
+	},
+	loadingContainer: {
+		flex: 1,
 		justifyContent: 'center',
-		// marginTop: StatusBar.currentHeight || 0,
-	},
-	title: {
-		fontSize: 25,
-		fontWeight: '500',
-		padding: 5,
-		textAlign: 'center',
-	},
-	body: {
-		backgroundColor: 'orange',
 		alignItems: 'center',
-		justifyContent: 'center',
-		textAlign: 'center',
 	},
-	signOut: {
-		marginBottom: 5,
-		paddingBottom: 20,
+	errorContainer: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: '#f8d7da',
+		padding: 16,
 	},
 })
+
+// function MarketCapsListContent() {
+// 	const { data, loading, error } = useQuery(GET_MARKETCAPS, {
+// 		client: BlocktapClient,
+// 	})
+
+// 	const [marketCaps, setMarketCaps] = useState([])
+
+// 	useEffect(() => {
+// 		if (data) {
+// 			setMarketCaps(data.assets)
+// 		}
+// 	}, [data])
+
+// 	if (loading) {
+// 		return <Text>Loading...</Text>
+// 	}
+
+// 	if (error) {
+// 		return <Text>Error! {error.message}</Text>
+// 	}
+
+// 	return (
+// 		<FlatList
+// 			data={marketCaps}
+// 			renderItem={({ item }) => {
+// 				console.log('Rendering item:', item);
+// 				return (
+// 				<View style={styles.container}>
+// 					<Text style={styles.title}>
+// 						{item.assetName} ({item.assetSymbol}) - {item.marketCap}
+// 					</Text>
+// 				</View>
+// 			)}
+// 			keyExtractor={(item) => item.id}
+// 		/>
+// 	)
+// }
+// export default FlatMarketList
