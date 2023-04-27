@@ -1,3 +1,6 @@
+// create apollo client code to only use network and not cache
+//
+
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { Blocktap_API_KEY, BlockTap_GraphQL_ENDPOINT } from '@env'
 
