@@ -25,17 +25,45 @@ const GET_MARKETCAPS = gql`
 	}
 `
 
-const renderItem = ({ item }) => (
-	<View style={styles.itemContainer}>
-		<Text style={styles.name}>{item.assetName}</Text>
-		<Text style={styles.symbol}>{item.assetSymbol}</Text>
-		<Text style={styles.price}>
-			Market Cap: {item.marketCap.toLocaleString()}
-		</Text>
-	</View>
-)
+const MarketList = () => {
+	const [portfolio, setAddToPortfolio] = useState([])
 
-const CryptoListScreen = () => {
+	function renderItem({ item }) {
+		return (
+			<View style={styles.itemContainer}>
+				<Pressable
+					key={item.id}
+					onPress={() => {
+						alert(`${item.assetSymbol} Currency Added to Portfolio`)
+
+						setAddToPortfolio([...portfolio, item.id])
+					}}
+				>
+					<View>
+						<Text style={styles.name}>{item.assetName}</Text>
+					</View>
+					<View>
+						<Text style={styles.symbol}>{item.assetSymbol}</Text>
+					</View>
+					<Text style={styles.currency}>
+						Market Cap: {item.marketCap.toLocaleString()}
+					</Text>
+				</Pressable>
+			</View>
+		)
+	}
+
+	// create view for displaying two columns of separately styled text
+	const TwoColumnView = ({ children }) => {
+		const theme = useTheme()
+		return (
+			<View style={styles.twoColumnView}>
+				<View style={styles.columnOne}>{children[0]}</View>
+				<View style={styles.columnTwo}>{children[1]}</View>
+			</View>
+		)
+	}
+
 	// Fetch cryptocurrency data using Apollo useQuery hook
 	const { loading, error, data } = useQuery(GET_MARKETCAPS, {
 		fetchPolicy: 'network-only',
@@ -44,7 +72,7 @@ const CryptoListScreen = () => {
 	if (loading) {
 		// Render loading state
 		return (
-			<View style={styles.loadingContainer}>
+			<View style={styles.messageContainer}>
 				<Text>Loading...</Text>
 			</View>
 		)
@@ -59,32 +87,52 @@ const CryptoListScreen = () => {
 		)
 	}
 
+	if (!data) {
+		// Render empty state
+		return (
+			<View style={styles.messageContainer}>
+				<Text>Not found</Text>
+			</View>
+		)
+	}
+
 	console.log(`Data: ${JSON.stringify(data)}`)
+	console.log(`Portfolio: ${portfolio}`)
+
+	const headerContent = () => {
+		return (
+			<View style={styles.itemContainer}>
+				<Text style={styles.ListHeader}>Crypto Market Cap Ranking</Text>
+			</View>
+		)
+	}
+
 	// Render FlatList with cryptocurrency data
 	return (
 		<View style={styles.container}>
 			<FlatList
 				data={data.assets} // Replace with the actual data retrieved from GraphQL query
+				ListHeaderComponent={headerContent}
 				renderItem={renderItem}
 				keyExtractor={(item) => item.id} // Replace with the unique identifier for each item
+				horizontal={false}
+				numColumns={1}
 			/>
 		</View>
 	)
 }
 
-function FlatMarketList() {
+function FlatMarketListScreen() {
 	return (
 		<ApolloProvider client={BlocktapClient}>
 			<View style={styles.container}>
-				<Text style={styles.title}>Crypto Market Cap Ranking</Text>
-				<Text style={styles.body}>Let's create a tracking portfolio</Text>
-				<CryptoListScreen />
+				<MarketList />
 			</View>
 		</ApolloProvider>
 	)
 }
 
-export default FlatMarketList
+export default FlatMarketListScreen
 
 const styles = StyleSheet.create({
 	container: {
@@ -105,59 +153,26 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		color: '#666',
 	},
-	price: {
+	currency: {
 		fontSize: 16,
 		color: '#333',
 	},
-	loadingContainer: {
+	messageContainer: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
 	errorContainer: {
+		// required for error message?
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 		backgroundColor: '#f8d7da',
 		padding: 16,
 	},
+	ListHeader: {
+		fontSize: 24,
+		fontWeight: 'bold',
+		color: '#333',
+	},
 })
-
-// function MarketCapsListContent() {
-// 	const { data, loading, error } = useQuery(GET_MARKETCAPS, {
-// 		client: BlocktapClient,
-// 	})
-
-// 	const [marketCaps, setMarketCaps] = useState([])
-
-// 	useEffect(() => {
-// 		if (data) {
-// 			setMarketCaps(data.assets)
-// 		}
-// 	}, [data])
-
-// 	if (loading) {
-// 		return <Text>Loading...</Text>
-// 	}
-
-// 	if (error) {
-// 		return <Text>Error! {error.message}</Text>
-// 	}
-
-// 	return (
-// 		<FlatList
-// 			data={marketCaps}
-// 			renderItem={({ item }) => {
-// 				console.log('Rendering item:', item);
-// 				return (
-// 				<View style={styles.container}>
-// 					<Text style={styles.title}>
-// 						{item.assetName} ({item.assetSymbol}) - {item.marketCap}
-// 					</Text>
-// 				</View>
-// 			)}
-// 			keyExtractor={(item) => item.id}
-// 		/>
-// 	)
-// }
-// export default FlatMarketList

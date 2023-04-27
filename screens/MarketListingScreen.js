@@ -31,34 +31,6 @@ const GET_MARKETCAPS = gql`
 	}
 `
 
-// function DisplayMarketCaps() {
-// 	const { loading, error, data } = useQuery(GET_MARKETCAPS)
-// 	const [marketCaps, setMarketCaps] = useState([])
-// 	const { colors } = useTheme()
-
-// 	useEffect(() => {
-// 		if (data) {
-// 			setMarketCaps(data.assets)
-// 		}
-// 	}, [data])
-
-// 	if (loading) return <Text>Loading...</Text>
-// 	if (error) return <Text>Error :(</Text>
-
-// 	return (
-// 		<Flatlist
-// 			data={marketCaps}
-// 			renderItem={({ item }) => (
-// 				<View style={styles.container}>
-// 					<Text style={styles.title}>
-// 						{item.assetName} ({item.assetSymbol}) - {item.marketCap}
-// 					</Text>
-// 				</View>
-// 			)}
-// 			keyExtractor={(item) => item.id}
-// 		/>
-// 	)
-// }
 
 const MarketCapsTableContent = () => {
 	const { loading, error, data } = useQuery(GET_MARKETCAPS, {
