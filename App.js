@@ -19,7 +19,6 @@ function SignOutButton() {
 	return <Button title='Sign Out' onPress={signOut} />
 }
 
-
 function App() {
 	return (
 		<Authenticator.Provider>
@@ -45,7 +44,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: 'gray',
 		alignItems: 'center',
-		
+
 		// justifyContent: 'center',
 	},
 	title: {

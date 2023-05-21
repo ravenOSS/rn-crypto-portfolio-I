@@ -24,14 +24,85 @@ const GET_MARKETCAPS = gql`
 		}
 	}
 `
+const limit = 15
 
-const MarketList = () => {
+const TOP_RANKED_QUERY = gql`
+	query topRankedAssets {
+		assets(
+			filter: {
+				marketCapRank: {
+					_lte: 15 # less than or equal to 15
+				}
+			}
+			sort: { marketCapRank: ASC }
+		) {
+			id
+			assetName
+			assetSymbol
+			marketCapRank
+		}
+	}
+`
+
+// const IntrospectionQuery = gql`
+// 	query IntrospectionQuery {
+//   __schema {
+//     queryType {
+//       name
+//     }
+//     mutationType {
+//       name
+//     }
+//     subscriptionType {
+//       name
+//     }
+//     types {
+//       ...FullType
+//     }
+//     directives {
+//       name
+//       description
+//       locations
+//       args {
+//         ...InputValue
+//       }
+//     }
+//   }
+// }
+
+// const TOP_RANKED_QUERY = gql`
+// 	query topRankedAssets {
+// 		assets(
+// 			filter: {
+// 				marketCapRank: {
+// 					_lte: 15 # less than or equal to 15
+// 				}
+// 			}
+// 			sort: { marketCapRank: ASC }
+// 		) {
+// 			id
+// 			assetName
+// 			assetSymbol
+// 			marketCapRank
+// 			markets {
+// 				marketSymbol
+// 				ticker {
+// 					lastPrice
+// 					baseVolume
+// 					percentChange
+// 				}
+// 			}
+// 		}
+// 	}
+// `
+
+const MarketQuote = () => {
 	// function MarketList () {
 	const [portfolio, setPortfolioAdd] = useState([])
 
 	// Fetch cryptocurrency data using Apollo useQuery hook
 	// https://www.apollographql.com/docs/react/api/react/hooks/#usequery
-	const { loading, error, data, refetch } = useQuery(GET_MARKETCAPS, {
+	const { loading, error, data, refetch } = useQuery(TOP_RANKED_QUERY, {
 		fetchPolicy: 'cache-and-network',
 	})
 
@@ -82,14 +153,14 @@ const MarketList = () => {
 						setPortfolioAdd([...portfolio, item.id])
 					}}
 				>
-					<View>
+					<View style={styles.horizontal}>
 						<Text style={styles.name}>{item.assetName}</Text>
 					</View>
-					<View>
+					<View style={styles.horizontal}>
 						<Text style={styles.symbol}>{item.assetSymbol}</Text>
 					</View>
 					<Text style={styles.currency}>
-						Market Cap: {item.marketCap.toLocaleString()}
+						Market Cap Rank: {item.marketCapRank.toLocaleString()}
 					</Text>
 				</Pressable>
 			</View>
@@ -99,7 +170,7 @@ const MarketList = () => {
 	const headerContent = () => {
 		return (
 			<View style={styles.itemContainer}>
-				<Text style={styles.ListHeader}>Crypto Market Cap Ranking</Text>
+				<Text style={styles.ListHeader}>Crypto Market Quote</Text>
 			</View>
 		)
 	}
@@ -119,17 +190,17 @@ const MarketList = () => {
 	)
 }
 
-function MarketFlatListScreen() {
+function MarketQuoteScreen() {
 	return (
 		<ApolloProvider client={BlocktapClient}>
 			<View style={styles.container}>
-				<MarketList />
+				<MarketQuote />
 			</View>
 		</ApolloProvider>
 	)
 }
 
-export default MarketFlatListScreen
+export default MarketQuoteScreen
 
 const styles = StyleSheet.create({
 	container: {
@@ -153,6 +224,10 @@ const styles = StyleSheet.create({
 	currency: {
 		fontSize: 16,
 		color: '#333',
+	},
+	horizontal: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
 	},
 	messageContainer: {
 		flex: 1,
