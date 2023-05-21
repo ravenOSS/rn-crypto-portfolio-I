@@ -1,4 +1,5 @@
-// This code is setting up an Apollo Client to make GraphQL requests to the Blocktap API. It is creating an httpLink to the Blocktap API, setting up an authLink to provide the API key, and creating an Apollo Client with the httpLink and authLink. It is also setting up a GraphQL query to get the market caps of assets.
+// explain the code
+
 import { ApolloProvider, gql, useQuery } from '@apollo/client'
 import BlocktapClient from '../components/BlocktapClient'
 import { useEffect, useState } from 'react'
@@ -30,7 +31,6 @@ const GET_MARKETCAPS = gql`
 		}
 	}
 `
-
 
 const MarketCapsTableContent = () => {
 	const { loading, error, data } = useQuery(GET_MARKETCAPS, {
@@ -102,7 +102,7 @@ const DisplayMarketCaps = () => {
 	)
 }
 
-function MarketListing() {
+function MktCapTable() {
 	return (
 		<ApolloProvider client={BlocktapClient}>
 			<View style={styles.container}>
@@ -114,7 +114,7 @@ function MarketListing() {
 	)
 }
 
-export default MarketListing
+export default MktCapTable
 
 const styles = StyleSheet.create({
 	container: {
