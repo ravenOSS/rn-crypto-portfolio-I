@@ -60,7 +60,6 @@ const MarketList = () => {
 	}
 
 	if (!data) {
-		// Render empty state
 		return (
 			<View style={styles.messageContainer}>
 				<Text>Not found</Text>
